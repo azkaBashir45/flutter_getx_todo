@@ -32,8 +32,14 @@ class HomeScreen extends StatelessWidget {
                                     .bodyText1!
                                     .color),
                       ),
-                      onTap: () {},
-                      trailing: Checkbox(
+                      onTap: () {
+                        //for editing
+                        Get.to(TodoScreen(
+                          index: index,
+                        ));
+                        //inside the code
+                      },
+                      leading: Checkbox(
                         value: myController.todos[index].isDone,
                         onChanged: (v) {
                           var changed = myController.todos[index];
@@ -41,6 +47,7 @@ class HomeScreen extends StatelessWidget {
                           myController.todos[index] = changed;
                         },
                       ),
+                      trailing: Icon(Icons.chevron_right),
                     ),
                 separatorBuilder: (_, __) => Divider(),
                 itemCount: myController.todos.length))));

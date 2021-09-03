@@ -1,11 +1,26 @@
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
+import 'package:getxtodoapp/controller/todo_controller.dart';
+import 'package:getxtodoapp/model/Todo.dart';
 
 class TodoScreen extends StatelessWidget {
+  final MyController myController = Get.find();
+//for editing screen
+  final int? index;
+  TodoScreen({this.index});
+
+  //inside portion for editing
   @override
   Widget build(BuildContext context) {
+    //editintg
     String text = '';
-   
+
+    if (!this.index.isNull) {
+      text = myController.todos[index!].text;
+    }
+    //inside
+    // simple add TextEditingController textEditingController = TextEditingController();
+    //editing
     TextEditingController textEditingController =
         TextEditingController(text: text);
     return Scaffold(
@@ -39,13 +54,22 @@ class TodoScreen extends StatelessWidget {
                   },
                 ),
                 RaisedButton(
-                  child: Text( 'Add'),
+                  // add child: Text('Add'),
+                  //editing
+                  child: Text(this.index.isNull ? 'Add' : 'Edit'),
                   color: Colors.green,
                   onPressed: () {
-                    
-                      // todoController.todos.add(Todo(text: textEditingController.text));
-                   
-
+                    // add myController.todos
+                    //     .add(Todo(text: textEditingController.text));
+                    //editing
+                    if (this.index.isNull) {
+                      myController.todos
+                          .add(Todo(text: textEditingController.text));
+                    } else {
+                      var editing = myController.todos[index!];
+                      editing.text = textEditingController.text;
+                      myController.todos[index!] = editing;
+                    }
                     Get.back();
                   },
                 ),
