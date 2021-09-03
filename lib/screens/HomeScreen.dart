@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import 'package:get/get.dart';
+import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'TodoScreen.dart';
 import 'package:getxtodoapp/controller/todo_controller.dart';
 
@@ -19,35 +20,98 @@ class HomeScreen extends StatelessWidget {
         ),
         body: Container(
             child: Obx(() => ListView.separated(
-                itemBuilder: (context, index) => ListTile(
-                      title: Text(
-                        myController.todos[index].text,
-                        style: (myController.todos[index].isDone)
-                            ? TextStyle(
-                                color: Colors.red,
-                                decoration: TextDecoration.lineThrough)
-                            : TextStyle(
-                                color: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1!
-                                    .color),
-                      ),
-                      onTap: () {
-                        //for editing
-                        Get.to(TodoScreen(
-                          index: index,
-                        ));
-                        //inside the code
+                //without storage and dismissiable
+                // itemBuilder: (context, index) => ListTile(
+                //       title: Text(
+                //         myController.todos[index].text,
+                //         style: (myController.todos[index].isDone)
+                //             ? TextStyle(
+                //                 color: Colors.red,
+                //                 decoration: TextDecoration.lineThrough)
+                //             : TextStyle(
+                //                 color: Theme.of(context)
+                //                     .textTheme
+                //                     .bodyText1!
+                //                     .color),
+                //       ),
+                //       onTap: () {
+                //         //for editing
+                //         Get.to(TodoScreen(
+                //           index: index,
+                //         ));
+                //         //inside the code
+                //       },
+                //       leading: Checkbox(
+                //         value: myController.todos[index].isDone,
+                //         onChanged: (v) {
+                //           var changed = myController.todos[index];
+                //           changed.isDone = v!;
+                //           myController.todos[index] = changed;
+                //         },
+                //       ),
+                //       trailing: Icon(Icons.chevron_right),
+                //     ),
+                // separatorBuilder: (_, __) => Divider(),
+                // itemCount: myController.todos.length))));
+
+//with dismissible and storage
+
+                itemBuilder: (context, index) => Dismissible(
+                      key: UniqueKey(),
+                      onDismissed: (_) {
+                        var removed = myController.todos[index];
+                        myController.todos.removeAt(index);
+                        Get.snackbar('Task removed',
+                            'The task "${removed.text}" was successfully removed.',
+                            mainButton: TextButton(
+                                child: Text(
+                                  'Undo',
+                                  style: TextStyle(
+                                      fontSize: 20, color: Colors.black),
+                                ),
+                                onPressed: () {
+                                  if (removed.isNull) {
+                                    return;
+                                  }
+                                  myController.todos.insert(index, removed);
+                                  // removed=null;
+                                  // if (Get.isSnackbarOpen) {
+                                  //   Get.back();
+                                  // }
+                                })
+
+                            );
                       },
-                      leading: Checkbox(
-                        value: myController.todos[index].isDone,
-                        onChanged: (v) {
-                          var changed = myController.todos[index];
-                          changed.isDone = v!;
-                          myController.todos[index] = changed;
+                      child: ListTile(
+                        title: Text(
+                          myController.todos[index].text,
+                          style: (myController.todos[index].isDone)
+                              ? TextStyle(
+                                  color: Colors.red,
+                                  decoration: TextDecoration.lineThrough)
+                              : TextStyle(
+                                  color: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1!
+                                      .color),
+                        ),
+                        onTap: () {
+                          //for editing
+                          Get.to(TodoScreen(
+                            index: index,
+                          ));
+                          //inside the code
                         },
+                        leading: Checkbox(
+                          value: myController.todos[index].isDone,
+                          onChanged: (v) {
+                            var changed = myController.todos[index];
+                            changed.isDone = v!;
+                            myController.todos[index] = changed;
+                          },
+                        ),
+                        trailing: Icon(Icons.chevron_right),
                       ),
-                      trailing: Icon(Icons.chevron_right),
                     ),
                 separatorBuilder: (_, __) => Divider(),
                 itemCount: myController.todos.length))));
